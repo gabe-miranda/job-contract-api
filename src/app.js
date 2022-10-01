@@ -19,4 +19,11 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
     res.json(contract);
 });
 
+app.get('/contracts', getProfile, async (req, res) => {
+    const { id: user_id, type: user_type } = req.profile;
+    const contracts = await ContractsHandler.getNonTerminatedContracts(user_id, user_type);
+    if (!contracts.length) return res.status(404).end();
+    res.json(contracts);
+});
+
 module.exports = app;
