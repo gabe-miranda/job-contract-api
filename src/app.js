@@ -34,4 +34,16 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
     res.json(jobs);
 });
 
+app.post('/jobs/:job_id/pay', getProfile, async (req, res) => {
+    try {
+        const { job_id } = req.params;
+        const { id: user_id, type: user_type } = req.profile;
+        if (user_type !== 'client') return res.status(401).end();
+        await JobsHandler.payJob(job_id, user_id);
+        return res.status(200).end();
+    } catch (error) {
+        res.status(400).json({ reason: error.message });
+    }
+});
+
 module.exports = app;
