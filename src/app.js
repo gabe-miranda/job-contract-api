@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { sequelize } = require('./model')
 const { getProfile } = require('./middleware/getProfile');
 const ContractsHandler = require('./contracts/handler');
+const JobsHandler = require('./jobs/handler');
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize)
@@ -24,6 +25,13 @@ app.get('/contracts', getProfile, async (req, res) => {
     const contracts = await ContractsHandler.getNonTerminatedContracts(user_id, user_type);
     if (!contracts.length) return res.status(404).end();
     res.json(contracts);
+});
+
+app.get('/jobs/unpaid', getProfile, async (req, res) => {
+    const { id: user_id, type: user_type } = req.profile;
+    const jobs = await JobsHandler.getUnpaidJobs(user_id, user_type);
+    if (!jobs.length) return res.status(404).end();
+    res.json(jobs);
 });
 
 module.exports = app;
