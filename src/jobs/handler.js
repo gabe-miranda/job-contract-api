@@ -36,7 +36,6 @@ class JobsHandler {
             if (!job) throw new Error('Job not found or already paid');
 
             const contractor_id = job.Contract.ContractorId;
-            const contract_id = job.Contract.id;
             const job_price = job.price;
 
             const client = await Profile.findOne({ where: { id: payer_id }, transaction });

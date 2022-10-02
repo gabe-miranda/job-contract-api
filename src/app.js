@@ -4,6 +4,7 @@ const { sequelize } = require('./model')
 const { getProfile } = require('./middleware/getProfile');
 const ContractsHandler = require('./contracts/handler');
 const JobsHandler = require('./jobs/handler');
+const BalancesHandler = require('./balances/handler');
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize)
@@ -40,6 +41,17 @@ app.post('/jobs/:job_id/pay', getProfile, async (req, res) => {
         const { id: user_id, type: user_type } = req.profile;
         if (user_type !== 'client') return res.status(401).end();
         await JobsHandler.payJob(job_id, user_id);
+        return res.status(200).end();
+    } catch (error) {
+        res.status(400).json({ reason: error.message });
+    }
+});
+
+app.post('/balances/deposit/:user_id', getProfile, async (req, res) => {
+    try {
+        const { user_id } = req.params;
+        const { amount } = req.body;
+        await BalancesHandler.addBalance(user_id, amount);
         return res.status(200).end();
     } catch (error) {
         res.status(400).json({ reason: error.message });
