@@ -5,6 +5,7 @@ const { getProfile } = require('./middleware/getProfile');
 const ContractsHandler = require('./contracts/handler');
 const JobsHandler = require('./jobs/handler');
 const BalancesHandler = require('./balances/handler');
+const AdminHandler = require('./admin/handler');
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize)
@@ -55,6 +56,16 @@ app.post('/balances/deposit/:user_id', getProfile, async (req, res) => {
         return res.status(200).end();
     } catch (error) {
         res.status(400).json({ reason: error.message });
+    }
+});
+
+app.get('/admin/best-profession', getProfile, async (req, res) => {
+    try {
+        const { start, end } = req.query;
+        const result = await AdminHandler.getBestProfession(start, end);
+        res.json(result);
+    } catch (error) {
+        res.status(404).json({ reason: error.message });
     }
 });
 
