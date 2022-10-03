@@ -69,4 +69,14 @@ app.get('/admin/best-profession', getProfile, async (req, res) => {
     }
 });
 
+app.get('/admin/best-clients', getProfile, async (req, res) => {
+    try {
+        const { start, end, limit } = req.query;
+        const result = await AdminHandler.getBestClients(start, end, limit);
+        res.json(result);
+    } catch (error) {
+        res.status(404).json({ reason: error.message });
+    }
+});
+
 module.exports = app;
